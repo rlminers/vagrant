@@ -1,0 +1,26 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure("2") do |config|
+  config.vm.box = "bento/centos-6.9"
+  config.vm.network "forwarded_port", guest: 8080, host: 1234
+  config.omnibus.chef_version = :latest
+
+  config.vm.provider "virtualbox" do |vb|
+    vb.name = "my_test_box"
+    vb.memory = 4096
+    vb.cpus = 2
+  end
+
+  config.vm.provision "chef_solo" do |chef|
+    chef.cookbooks_path = "/Users/richard.l.miners/Dropbox/db-tools/github/vagrant/chef/supermarket"
+    chef.add_recipe "java"
+    chef.add_recipe "tomcat_latest"
+    chef.json = { 
+      "java" => {
+        "jdk_version" => "7"
+      }
+    } 
+  end
+end
+
